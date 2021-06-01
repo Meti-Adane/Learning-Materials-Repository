@@ -31,7 +31,8 @@
     "eslint-plugin-react": "7.23.2",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.9",
-    "prettier": "2.3.0"
+    "prettier": "2.3.0",
+    "react-dfb": "^1.0.4"
   },
   "optionalDependencies": {
     "typescript": "4.2.4"
