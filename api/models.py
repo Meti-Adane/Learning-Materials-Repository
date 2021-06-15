@@ -157,7 +157,7 @@ class Course(db.Model):
         return Course.query.all()
 
     @staticmethod
-    def get_course_by_id():
+    def get_course_by_id(id):
 
         return Course.query.filter_by(id=id).first()
     
