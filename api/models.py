@@ -1,7 +1,13 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
+from flask import send_from_directory, url_for
 from api import db
 from sqlalchemy import or_
+
+
+
+
 
 
 class Book(db.Model):
@@ -11,20 +17,25 @@ class Book(db.Model):
     author = db.Column(db.String(100), index=True)
     isbn = db.Column(db.String(100), index=True, unique=True)
     publisher = db.Column(db.String(100), index=True)
+    description = db.Column(db.Text)
     publish_date = db.Column(db.Date)
     edition = db.Column(db.String(50))
-    description = db.Column(db.Text)
-    image_file = db.Column(db.String(20), nullable=False, default='book_default.jpg')
+    image_file = db.Column(db.Text)
     skill_level = db.Column(db.String(20))
-    path = db.Column(db.Text)
+    book_file_path = db.Column(db.Text)
 
-    def __init__(self, title, author,description, isbn, publisher):
+    def __init__(self, title, author, isbn, publisher, description, publish_date, edition, image_file, skill_level, book_file):
         """Init function"""
         self.title = title
         self.author = author
-        self.description = description
         self.isbn = isbn
         self.publisher = publisher
+        self.description = description
+        self.publish_date = publish_date
+        self.edition = edition
+        self.image_file = save_book_image(image_file)
+        self.skill_level = skill_level
+        self.book_file_path = save_book_file(book_file)
         
         
 
@@ -37,6 +48,51 @@ class Book(db.Model):
     def get_book_by_id(id):
         """Gets book by id"""
         return Book.query.filter_by(id=id).first()
+
+
+
+
+
+
+
+
+
+    def allowed_file(filename, ALLOWED_EXTENSIONS):
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+    def return_file(filename, UPLOAD_FOLDER):
+        return send_from_directory(UPLOAD_FOLDER, filename)
+
+
+    @staticmethod
+    def save_book_image(image_file):
+       
+        if image_file and allowed_file(image_file.filename, app.config['IMAGE_ALLOWED_EXTENSIONS']):
+            image_filename = secure_filename(image_file.filename)
+            file.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], image_filename))
+
+        return url_for('uploaded_file', filename=image_filename,
+        UPLOAD_FOLDER=app.config['IMAGE_UPLOAD_FOLDER'], _external=True)
+    
+    @staticmethod
+    def save_book_file(book_file):
+        
+        if book_file and allowed_file(book_file.filename, app.config['BOOK_ALLOWED_EXTENSIONS']):
+            book_filename = secure_filename(book_file.filename)
+            file.save(os.path.join(app.config['BOOK_UPLOAD_FOLDER'], book_filename))
+
+        return url_for('uploaded_file', filename=book_filename,
+        UPLOAD_FOLDER=app.config['BOOK_UPLOAD_FOLDER'], _external=True)
+
+
+
+
+
+
+
+
+
 
     @staticmethod
     def search(q):
@@ -73,11 +129,20 @@ class Book(db.Model):
     def __repr__(self):
         return "Book: {}".format(self.title)
 
+
+
+
+
+
+
+
+
 class Course(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(500), index=True)
     description = db.Column(db.Text)
+    books = db.relationship('Book', secondary=book_resource, backref=db.backref('books'))
 
     def init(self, title):
         self.title = title
@@ -107,6 +172,19 @@ class Course(db.Model):
             "title":self.title,
             "description":self.description
         }
+
+
+
+
+
+book_resource = db.Table('book_resource', db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True), 
+db.Column('book_id', db.Integer, db.ForeignKey('books.id'), primary_key=True))
+
+
+
+
+
+
 class User(db.Model):
 
     __tablename__ = 'users'
