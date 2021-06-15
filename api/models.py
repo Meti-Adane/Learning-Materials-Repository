@@ -108,7 +108,7 @@ class Book(db.Model):
             "id": self.id,
             "title": self.title,
             "author": self.author,
-            "description":self.description
+            "description":self.description,
             "isbn": self.isbn,
             "publisher": self.publisher,
             "publish_date":self.publish_date,
@@ -132,6 +132,10 @@ class Book(db.Model):
 
 
 
+
+
+book_resource = db.Table('book_resource', db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True), 
+db.Column('book_id', db.Integer, db.ForeignKey('books.id'), primary_key=True))
 
 
 
@@ -176,9 +180,6 @@ class Course(db.Model):
 
 
 
-
-book_resource = db.Table('book_resource', db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True), 
-db.Column('book_id', db.Integer, db.ForeignKey('books.id'), primary_key=True))
 
 
 
