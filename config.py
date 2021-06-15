@@ -6,7 +6,7 @@ class Config(object):
     JWT_SECRET_KEY = 'super-secret-key'
     JWT_BLACKLIST_ENABLED = False
     JWT_BLACKLIST_TOKEN_CHECKS = ['access']
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('FlaskRepositoryDB')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
@@ -14,7 +14,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    #SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('FlaskRepositoryDB')
     SQLALCHEMY_ECHO = False
 
 class TestingConfig(Config):
