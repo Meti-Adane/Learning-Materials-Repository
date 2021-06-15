@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from api import db
-from sqlalchemy import orm
+from sqlalchemy import or_
 
 
 class Book(db.Model):
@@ -16,14 +16,17 @@ class Book(db.Model):
     description = db.Column(db.Text)
     image_file = db.Column(db.String(20), nullable=False, default='book_default.jpg')
     skill_level = db.Column(db.String(20))
+    path = db.Column(db.Text)
 
-    def __init__(self, title, author, isbn, publisher, quantity):
+    def __init__(self, title, author,description, isbn, publisher):
         """Init function"""
         self.title = title
         self.author = author
+        self.description = description
         self.isbn = isbn
         self.publisher = publisher
-        self.quantity = quantity
+        
+        
 
     @staticmethod
     def get_all_books():
@@ -44,18 +47,17 @@ class Book(db.Model):
     @property
     def serialize(self):
         """Serializes book information"""
-        if self.quantity == 0:
-            self.availability = False
-        else:
-            self.availability = True
+        
         return {
             "id": self.id,
             "title": self.title,
             "author": self.author,
+            "description":self.description
             "isbn": self.isbn,
             "publisher": self.publisher,
-            "availability": self.availability,
-            "quantity": self.quantity
+            "publish_date":self.publish_date,
+            "skill_level":self.skill_level,
+            "cover_img":self.image_file
         }
 
     def save(self):
@@ -71,8 +73,40 @@ class Book(db.Model):
     def __repr__(self):
         return "Book: {}".format(self.title)
 
+class Course(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(500), index=True)
+    description = db.Column(db.Text)
 
+    def init(self, title):
+        self.title = title
 
+    @staticmethod
+    def get_all_courses():
+
+        return Course.query.all()
+
+    @staticmethod
+    def get_course_by_id():
+
+        return Course.query.filter_by(id=id).first()
+    
+    @staticmethod
+    def search(q):
+        courses = Course.query.filter(
+            or_(Course.title.like('%'+q.title()+'%'))
+        ).all()
+        return {"Courses":[course.serialize for course in courses]}
+
+    @property
+    def serialize(self):
+
+        return {
+            "id": self.id,
+            "title":self.title,
+            "description":self.description
+        }
 class User(db.Model):
 
     __tablename__ = 'users'
