@@ -1,4 +1,11 @@
-from main import app as application
+from api import app
+from api import routes
+
+
+
+app.register_blueprint(routes.mod)
+
+
 
 if __name__ == "__main__":
-    application.run()
+    app.run(debug=True)
