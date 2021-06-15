@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 
 
+
 BOOK_UPLOAD_FOLDER = '/static/books'
 IMAGE_UPLOAD_FOLDER = '/static/images'
 
@@ -24,3 +25,5 @@ app.config['BOOK_ALLOWED_EXTENSIONS'] = BOOK_ALLOWED_EXTENSIONS
 app.url_map.strict_slashes = False
 
 db = SQLAlchemy(app)
+
+from api.models import Book, Course, book_resource, User
