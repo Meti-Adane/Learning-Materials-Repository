@@ -54,3 +54,23 @@ def validate_register(data):
     data['username'] = data['username'].replace(" ", "").lower()
     data['first_name'] = data['first_name'].replace(" ", "")
     data['last_name'] = data['last_name'].replace(" ", "")
+
+
+def validate_login(data):
+    schema = {
+        'username': {
+            'type': 'string',
+            'required': True,
+            'empty': False
+        },
+        'password': {
+            'type': 'string',
+            'required': True,
+            'empty': False
+        }
+    }
+    validator = Validator(schema)
+    validator.validate(data)
+    errors = validator.errors
+    if errors: 
+        return errors
