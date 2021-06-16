@@ -71,20 +71,20 @@ class Book(db.Model):
        
         if image_file and allowed_file(image_file.filename, app.config['IMAGE_ALLOWED_EXTENSIONS']):
             image_filename = secure_filename(image_file.filename)
-            file.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], image_filename))
+            full_imagename = os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], image_filename)
+            file.save(full_imagename)
 
-        return url_for('return_file', filename=image_filename,
-        UPLOAD_FOLDER=app.config['IMAGE_UPLOAD_FOLDER'], _external=True)
+        return url_for('return_file', filename=full_imagename, _external=True) #UPLOAD_FOLDER=app.config['IMAGE_UPLOAD_FOLDER'],
     
     @staticmethod
     def save_book_file(book_file):
         
         if book_file and allowed_file(book_file.filename, app.config['BOOK_ALLOWED_EXTENSIONS']):
             book_filename = secure_filename(book_file.filename)
-            file.save(os.path.join(app.config['BOOK_UPLOAD_FOLDER'], book_filename))
+            full_bookname = os.path.join(app.config['BOOK_UPLOAD_FOLDER'], book_filename)
+            file.save(full_bookname)
 
-        return url_for('return_file', filename=book_filename,
-        UPLOAD_FOLDER=app.config['BOOK_UPLOAD_FOLDER'], _external=True)
+        return url_for('return_file', filename=full_bookname, _external=True) #UPLOAD_FOLDER=app.config['BOOK_UPLOAD_FOLDER']
 
 
 
