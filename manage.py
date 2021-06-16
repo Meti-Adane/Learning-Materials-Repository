@@ -9,8 +9,9 @@ from flask_script import Manager
 app.register_blueprint(routes.mod)
 
 
-manager = Manager(app)
+
 migrate = Migrate(app, db)
+manager = Manager(app)
 
 manager.add_command('db', MigrateCommand)
 
