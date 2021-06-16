@@ -74,3 +74,25 @@ def validate_login(data):
     errors = validator.errors
     if errors: 
         return errors
+
+
+def validate_reset(data):
+    schema = {
+        'password': {
+            'type': 'string',
+            'required': True
+        },
+        'new_password': {
+            'type': 'string',
+            'required': True
+        },
+        'confirm_password': {
+            'type': 'string',
+            'required': True
+        }
+    }
+    validator = Validator(schema)
+    validator.validate(data)
+    errors = validator.errors
+    if errors:
+        return errors
