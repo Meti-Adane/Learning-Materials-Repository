@@ -7,8 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 
-BOOK_UPLOAD_FOLDER = 'static/books'
-IMAGE_UPLOAD_FOLDER = 'static/images'
+BOOK_UPLOAD_FOLDER = '/static/books'
+IMAGE_UPLOAD_FOLDER = '/static/images'
 
 IMAGE_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 BOOK_ALLOWED_EXTENSIONS = {'txt', 'pdf', 'epub', 'mobi'}
@@ -27,6 +27,10 @@ app.add_url_rule(
     "/api/book/<book_id>/download", endpoint="return_file", build_only=True
 )
 
+app.add_url_rule(
+    "/api/books", endpoint="return_file", build_only=True
+)
+
 db = SQLAlchemy(app)
 
-from api.models import Book, Course, book_resource, User
+from api.models import Book, Course, book_resource, User, Token, Revoked
