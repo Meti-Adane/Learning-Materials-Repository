@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
-from flask import send_from_directory, url_for
+from flask import send_from_directory, url_for, send_file
 from api import db
 from sqlalchemy import or_
 
@@ -61,9 +61,9 @@ class Book(db.Model):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    def return_file(self, filename, UPLOAD_FOLDER):
+    def return_file(self, filename):
         print("return_file called")
-        return send_from_directory(UPLOAD_FOLDER, filename)
+        return send_file(filename, as_attachment=True)
 
 
     @staticmethod
