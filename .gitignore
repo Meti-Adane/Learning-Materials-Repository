@@ -4,3 +4,5 @@ venv/
 ENV/
 
 __pycache__
+
+static
