@@ -1,3 +1,5 @@
+import ntpath
+from api import app
 from api.models import Book
 from api.admin.validate import validate_arg
 from flask_restful import Resource
@@ -46,4 +48,24 @@ class GetBook(Resource):
         if not book:
             return Response(json.dumps({"Message": "Book does not exist"}), status=404)
 
-        return Response(json.dumps(book.serialize),status = 200)   
+        return Response(json.dumps(book.serialize),status = 200)
+
+    
+
+
+
+class DownloadBook(Resource):
+    
+    def get(self, book_id):
+        if validate_arg(book_id):
+            return validate_arg(book_id)
+
+        book = Book.get_book_by_id(id=book_id)
+        if not book:
+            return Response(json.dumps({"Message": "Book does not exist"}), status=404)
+        
+
+        book_path = book.book_file_path
+        book_name = ntpath.basename(book_path)
+        directory = app.config['BOOK_UPLOAD_FOLDER']
+        return Response(book.return_file( book_name, directory), status=200)
