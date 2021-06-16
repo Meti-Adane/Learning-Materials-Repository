@@ -68,4 +68,4 @@ class DownloadBook(Resource):
         book_path = book.book_file_path
         book_name = ntpath.basename(book_path)
         directory = app.config['BOOK_UPLOAD_FOLDER']
-        return book.return_file( book_path)
+        return book.return_file(self, filename=book_path)
