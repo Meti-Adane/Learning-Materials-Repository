@@ -264,3 +264,67 @@ class User(db.Model):
 
     def __repr__(self):
         return "User: {}".format(self.username)
+
+
+
+
+
+
+class Token(db.Model):
+    """Token Model"""
+    __tablename__ = 'tokens'
+
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(1000), index=True, unique=True)
+    owner = db.Column(db.String(60))
+    created = db.Column(db.DateTime, default=datetime.today())
+
+    def __init__(self, token, owner):
+        """Init function"""
+        self.token = token
+        self.owner = owner
+
+    @staticmethod
+    def all_tokens():
+        """Gets all tokens"""
+        return Token.query.all()
+
+    @staticmethod
+    def token_by_owner(username):
+        """Gets token by user's username"""
+        return Token.query.filter_by(owner=username).first()
+
+    def save(self):
+        """Saves generated token to database."""
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        """Delete token after being revoked"""
+        db.session.delete(self)
+        db.session.commit()
+
+
+class Revoked(db.Model):
+    """Revoked Token Table"""
+
+    __tablename__ = 'revoked'
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(1000), index=True)
+    date_revoked = db.Column(db.DateTime, default=datetime.now())
+
+    def __init__(self, token):
+        """Init function"""
+        self.token = token
+
+    @staticmethod
+    def is_blacklisted(token):
+        """Checks if token is revoked"""
+        if Revoked.query.filter_by(token=token).first():
+            return True
+        return False
+
+    def save(self):
+        """Saves revoked token to database"""
+        db.session.add(self)
+        db.session.commit()
