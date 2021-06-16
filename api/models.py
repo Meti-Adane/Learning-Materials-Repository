@@ -57,11 +57,12 @@ class Book(db.Model):
 
 
 
-    def allowed_file(filename, ALLOWED_EXTENSIONS):
+    def allowed_file(self, filename, ALLOWED_EXTENSIONS):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    def return_file(filename, UPLOAD_FOLDER):
+    def return_file(self, filename, UPLOAD_FOLDER):
+        print("return_file called")
         return send_from_directory(UPLOAD_FOLDER, filename)
 
 
@@ -72,7 +73,7 @@ class Book(db.Model):
             image_filename = secure_filename(image_file.filename)
             file.save(os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], image_filename))
 
-        return url_for('uploaded_file', filename=image_filename,
+        return url_for('return_file', filename=image_filename,
         UPLOAD_FOLDER=app.config['IMAGE_UPLOAD_FOLDER'], _external=True)
     
     @staticmethod
@@ -82,7 +83,7 @@ class Book(db.Model):
             book_filename = secure_filename(book_file.filename)
             file.save(os.path.join(app.config['BOOK_UPLOAD_FOLDER'], book_filename))
 
-        return url_for('uploaded_file', filename=book_filename,
+        return url_for('return_file', filename=book_filename,
         UPLOAD_FOLDER=app.config['BOOK_UPLOAD_FOLDER'], _external=True)
 
 
