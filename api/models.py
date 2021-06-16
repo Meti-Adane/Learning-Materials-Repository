@@ -1,8 +1,9 @@
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 from flask import send_from_directory, url_for, send_file
-from api import db
+from api import app, db
 from sqlalchemy import or_
 
 
@@ -33,9 +34,9 @@ class Book(db.Model):
         self.description = description
         self.publish_date = publish_date
         self.edition = edition
-        self.image_file = save_book_image(image_file)
+        self.image_file = self.save_book_image(image_file)
         self.skill_level = skill_level
-        self.book_file_path = save_book_file(book_file)
+        self.book_file_path = self.save_book_file(book_file)
         
         
 
@@ -56,11 +57,11 @@ class Book(db.Model):
 
 
 
-
+    @staticmethod
     def allowed_file(self, filename, ALLOWED_EXTENSIONS):
         return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
+    @staticmethod
     def return_file(self, filename):
         print("return_file called")
         return send_file(filename, as_attachment=True)
@@ -69,20 +70,20 @@ class Book(db.Model):
     @staticmethod
     def save_book_image(image_file):
        
-        if image_file and allowed_file(image_file.filename, app.config['IMAGE_ALLOWED_EXTENSIONS']):
+        if image_file: #and allowed_file(image_file.filename, app.config['IMAGE_ALLOWED_EXTENSIONS']):
             image_filename = secure_filename(image_file.filename)
             full_imagename = os.path.join(app.config['IMAGE_UPLOAD_FOLDER'], image_filename)
-            file.save(full_imagename)
+            image_file.save(image_filename)
 
         return url_for('return_file', filename=full_imagename, _external=True) #UPLOAD_FOLDER=app.config['IMAGE_UPLOAD_FOLDER'],
     
     @staticmethod
     def save_book_file(book_file):
         
-        if book_file and allowed_file(book_file.filename, app.config['BOOK_ALLOWED_EXTENSIONS']):
+        if book_file: #and allowed_file(book_file.filename, app.config['BOOK_ALLOWED_EXTENSIONS']):
             book_filename = secure_filename(book_file.filename)
             full_bookname = os.path.join(app.config['BOOK_UPLOAD_FOLDER'], book_filename)
-            file.save(full_bookname)
+            book_file.save(book_filename)
 
         return url_for('return_file', filename=full_bookname, _external=True) #UPLOAD_FOLDER=app.config['BOOK_UPLOAD_FOLDER']
 
@@ -112,7 +113,7 @@ class Book(db.Model):
             "description":self.description,
             "isbn": self.isbn,
             "publisher": self.publisher,
-            "publish_date":self.publish_date,
+            "publish_date":self.publish_date.__str__(),
             "skill_level":self.skill_level,
             "cover_img":self.image_file
         }
